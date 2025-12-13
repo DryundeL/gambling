@@ -41,9 +41,16 @@ func New(cfg *config.Config) *Storage {
 		panic("failed to ping database: %w" + err.Error())
 	}
 
-	return &Storage{
+	storage := &Storage{
 		DB: db,
 	}
+
+	// Выполняем миграции при инициализации
+	if err := storage.RunMigrations(); err != nil {
+		panic("failed to run migrations: " + err.Error())
+	}
+
+	return storage
 }
 
 // Close закрывает соединение с базой данных.
