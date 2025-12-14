@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"gambling/internal/config"
-	"gambling/internal/database/pgsql"
-	"gambling/internal/http/router"
+	"gambling/internal/infrastructure/database/pgsql"
+	"gambling/internal/interfaces/http/router"
 	"log/slog"
 	"net/http"
 )
