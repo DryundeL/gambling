@@ -29,6 +29,23 @@ func New(cfg *config.Config) *Storage {
 
 	db, err := gorm.Open(postgres.Open(dsn), gormConfig)
 	if err != nil {
+		fmt.Println("═══════════════════════════════════════════════════════════")
+		fmt.Println("❌ ОШИБКА ПОДКЛЮЧЕНИЯ К БАЗЕ ДАННЫХ")
+		fmt.Println("═══════════════════════════════════════════════════════════")
+		fmt.Printf("Не удалось подключиться к PostgreSQL: %v\n", err)
+		fmt.Println("")
+		fmt.Println("Проверьте:")
+		fmt.Println("  1. PostgreSQL запущен и доступен")
+		fmt.Println("  2. Параметры в файле .env корректны:")
+		fmt.Printf("     - DB_HOST=%s\n", cfg.DBHost)
+		fmt.Printf("     - DB_PORT=%d\n", cfg.DBPort)
+		fmt.Printf("     - DB_USER=%s\n", cfg.DBUser)
+		fmt.Printf("     - DB_NAME=%s\n", cfg.DBName)
+		fmt.Println("     - DB_PASSWORD=*** (проверьте пароль)")
+		fmt.Println("  3. База данных существует:")
+		fmt.Printf("     CREATE DATABASE %s;\n", cfg.DBName)
+		fmt.Println("  4. Пользователь имеет права на базу данных")
+		fmt.Println("═══════════════════════════════════════════════════════════")
 		panic("failed to connect to database using GORM:" + err.Error())
 	}
 

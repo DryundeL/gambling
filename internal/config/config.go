@@ -50,6 +50,22 @@ func MustLoad() *Config {
 	config.LogLevel = getEnv("LOG_LEVEL", "info")
 
 	if config.DBHost == "" || config.DBUser == "" || config.DBPassword == "" || config.DBName == "" {
+		log.Println("═══════════════════════════════════════════════════════════")
+		log.Println("❌ ОШИБКА: Необходимые параметры базы данных отсутствуют")
+		log.Println("═══════════════════════════════════════════════════════════")
+		log.Println("Создайте файл .env в корне проекта со следующим содержимым:")
+		log.Println("")
+		log.Println("DB_HOST=localhost")
+		log.Println("DB_PORT=5432")
+		log.Println("DB_USER=your_postgres_user")
+		log.Println("DB_PASSWORD=your_postgres_password")
+		log.Println("DB_NAME=gambling")
+		log.Println("DB_SSLMODE=disable")
+		log.Println("APP_ENV=local")
+		log.Println("")
+		log.Println("Или скопируйте .env.example в .env и заполните значения:")
+		log.Println("  cp .env.example .env")
+		log.Println("═══════════════════════════════════════════════════════════")
 		panic("необходимые параметры базы данных отсутствуют")
 	}
 

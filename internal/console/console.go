@@ -5,9 +5,11 @@ import (
 	"fmt"
 	"gambling/internal/model"
 	"gambling/internal/service"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 // Console представляет консольный интерфейс для игры
@@ -249,6 +251,7 @@ func (c *Console) playSpin() {
 	fmt.Println("🎰 Крутим барабаны...")
 	fmt.Println()
 
+	// Сначала выполняем спин (получаем результат)
 	result, err := c.spinService.Spin(c.currentUser.ID, betAmount)
 	if err != nil {
 		if err == service.ErrInsufficientFunds {
@@ -263,10 +266,8 @@ func (c *Console) playSpin() {
 	// Обновляем баланс пользователя
 	c.currentUser.Balance = result.Balance
 
-	// Отображаем результат
-	fmt.Println("╔═══════════════════════════════════════╗")
-	fmt.Printf("║         [%d] [%d] [%d]          ║\n", result.Reel1, result.Reel2, result.Reel3)
-	fmt.Println("╚═══════════════════════════════════════╝")
+	// Показываем анимацию вращения барабанов
+	c.animateSpin(result.Reel1, result.Reel2, result.Reel3)
 
 	if result.IsWin {
 		fmt.Printf("🎉 ВЫИГРЫШ! Вы выиграли %.2f ₽\n", result.WinAmount)
@@ -279,6 +280,116 @@ func (c *Console) playSpin() {
 
 	// Показываем правила выигрыша
 	c.showWinRules()
+}
+
+// animateSpin показывает анимацию вращения барабанов с постепенным замедлением
+func (c *Console) animateSpin(reel1, reel2, reel3 int) {
+	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
+
+	// Количество оборотов для каждого барабана
+	spins1 := 15 + rng.Intn(10) // 15-24 оборота
+	spins2 := 15 + rng.Intn(10)
+	spins3 := 15 + rng.Intn(10)
+
+	fmt.Println("╔═══════════════════════════════════════╗")
+
+	// Первый барабан с замедлением
+	c.spinReel1(rng, spins1, reel1)
+	time.Sleep(400 * time.Millisecond)
+
+	// Второй барабан с замедлением
+	c.spinReel2(rng, spins2, reel1, reel2)
+	time.Sleep(400 * time.Millisecond)
+
+	// Третий барабан с замедлением
+	c.spinReel3(rng, spins3, reel1, reel2, reel3)
+
+	fmt.Println()
+	fmt.Println("╚═══════════════════════════════════════╝")
+}
+
+// spinReel1 вращает первый барабан
+func (c *Console) spinReel1(rng *rand.Rand, totalSpins, finalSymbol int) {
+	fastSpins := totalSpins - 5
+	slowSpins := 5
+
+	// Быстрое вращение
+	for i := 0; i < fastSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [ ] [ ]          ║", symbol)
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// Замедление перед остановкой
+	delays := []time.Duration{100, 150, 200, 250, 300}
+	for i := 0; i < slowSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [ ] [ ]          ║", symbol)
+		if i < len(delays) {
+			time.Sleep(delays[i])
+		} else {
+			time.Sleep(300 * time.Millisecond)
+		}
+	}
+
+	// Финальный символ
+	fmt.Printf("\r║         [%d] [ ] [ ]          ║", finalSymbol)
+}
+
+// spinReel2 вращает второй барабан
+func (c *Console) spinReel2(rng *rand.Rand, totalSpins, reel1, finalSymbol int) {
+	fastSpins := totalSpins - 5
+	slowSpins := 5
+
+	// Быстрое вращение
+	for i := 0; i < fastSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [%d] [ ]          ║", reel1, symbol)
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// Замедление перед остановкой
+	delays := []time.Duration{100, 150, 200, 250, 300}
+	for i := 0; i < slowSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [%d] [ ]          ║", reel1, symbol)
+		if i < len(delays) {
+			time.Sleep(delays[i])
+		} else {
+			time.Sleep(300 * time.Millisecond)
+		}
+	}
+
+	// Финальный символ
+	fmt.Printf("\r║         [%d] [%d] [ ]          ║", reel1, finalSymbol)
+}
+
+// spinReel3 вращает третий барабан
+func (c *Console) spinReel3(rng *rand.Rand, totalSpins, reel1, reel2, finalSymbol int) {
+	fastSpins := totalSpins - 5
+	slowSpins := 5
+
+	// Быстрое вращение
+	for i := 0; i < fastSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [%d] [%d]          ║", reel1, reel2, symbol)
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// Замедление перед остановкой
+	delays := []time.Duration{100, 150, 200, 250, 300}
+	for i := 0; i < slowSpins; i++ {
+		symbol := rng.Intn(10)
+		fmt.Printf("\r║         [%d] [%d] [%d]          ║", reel1, reel2, symbol)
+		if i < len(delays) {
+			time.Sleep(delays[i])
+		} else {
+			time.Sleep(300 * time.Millisecond)
+		}
+	}
+
+	// Финальный символ
+	fmt.Printf("\r║         [%d] [%d] [%d]          ║", reel1, reel2, finalSymbol)
 }
 
 // showWinRules показывает правила выигрыша
@@ -302,4 +413,3 @@ func (c *Console) showWinRules() {
 	fmt.Println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 	fmt.Println()
 }
-
